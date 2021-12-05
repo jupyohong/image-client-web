@@ -1,0 +1,15 @@
+.image-list-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.image-list-container img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+}
+
+.image-list-container img:hover {
+  cursor: pointer;
+}

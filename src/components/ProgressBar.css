@@ -1,0 +1,17 @@
+.gauge-bar {
+  height: 40px;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.current-gauge {
+  height: 30px;
+  padding-top: 10px;
+  border-radius: 10px;
+  color: white;
+  background-color: green;
+  text-align: center;
+  transition: 0.5s;
+}
