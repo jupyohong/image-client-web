@@ -20,7 +20,7 @@ const Image = ({ imageUrl }) => {
     <img
       alt=""
       onError={() => setIsError(true)}
-      OnLoad={() => {
+      onLoad={() => {
         setIsError(false);
       }}
       style={{ display: isError ? "none" : "block" }}

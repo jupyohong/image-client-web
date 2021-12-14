@@ -22,7 +22,7 @@ const UploadForm = () => {
     const imgFiles = event.target.files;
     if (!imgFiles) return;
     setFiles(imgFiles);
-    // Image preview
+    // Image preview for each uploads
     const imagePreviews = await Promise.all(
       [...imgFiles].map(async (imgFile) => {
         return new Promise((resolve, reject) => {
@@ -44,25 +44,22 @@ const UploadForm = () => {
     e.preventDefault();
     try {
       setIsLoading(true);
-      // Get presignedUrl for images from Express API server
+      // Get presigned URL from Express API server
       const presignedData = await axios.post("/images/presigned", {
         contentTypes: [...files].map((file) => file.type),
       });
 
-      const s3postResult = await Promise.all(
+      await Promise.all(
         [...files].map((file, index) => {
           const { presigned } = presignedData.data[index];
           const formData = new FormData();
           for (const [key, value] of Object.entries(presigned.fields)) {
             formData.append(key, value);
           }
-          // for (const key in presigned.fields) {
-          //   console.log({ key, value: presigned.fields[key] });
-          //   formData.append(key, presigned.fields[key]);
-          // }
-          // File must be added at last
           formData.append("Content-Type", file.type);
+          // FILE MUST BE ADDED AT LAST
           formData.append("file", file);
+          // Post images on AWS S3 through presigned URL
           return axios.post(presigned.url, formData, {
             onUploadProgress: (e) => {
               setUploadProgress((prevData) => {
@@ -75,9 +72,7 @@ const UploadForm = () => {
         })
       );
 
-      console.log({ s3postResult });
-      console.log({ presignedData });
-
+      // Post image info on Express server
       const result = await axios.post("/images", {
         images: [...files].map((file, index) => {
           return {
@@ -88,6 +83,7 @@ const UploadForm = () => {
         public: isPublic,
       });
 
+      // Re-render images
       if (isPublic)
         setPublicImages((prevData) => [...result.data, ...prevData]);
       setPrivateImages((prevData) => [...result.data, ...prevData]);
