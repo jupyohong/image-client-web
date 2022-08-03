@@ -34,22 +34,22 @@ const ImageList = () => {
     return () => observer.disconnect();
   }, [loadImages]);
 
-  const imgList = images.map((image, idx) => (
-    <Link
-      key={image.key}
-      to={`/images/${image._id}`}
-      ref={idx + 6 === images.length ? elementRef : undefined}
-    >
-      <Image
-        imageUrl={`https://image-upload-test-coconutsilo.s3.ap-northeast-2.amazonaws.com/raw/${image.key}`}
-      />
-      {/* <img
+  const imgList = images.map((image, idx) => {
+    return (
+      <Link
+        key={image.key}
+        to={`/images/${image._id}`}
+        ref={idx + 6 === images.length ? elementRef : undefined}
+      >
+        <Image imageKey={image.key} />
+        {/* <img
         key={image._id}
         src={}
         alt={image.originalFileName}
       /> */}
-    </Link>
-  ));
+      </Link>
+    );
+  });
 
   return (
     <>

@@ -44,7 +44,7 @@ const UploadForm = () => {
     e.preventDefault();
     try {
       setIsLoading(true);
-      // Get presigned URL from Express API server
+      // S3 Presigned URL 요청
       const presignedData = await axios.post("/images/presigned", {
         contentTypes: [...files].map((file) => file.type),
       });
@@ -106,36 +106,6 @@ const UploadForm = () => {
     }
   };
 
-  // const imageUploadHandler = async (e) => {
-  //   e.preventDefault();
-  //   const formData = new FormData();
-  //   for (const file of files) formData.append("images", file);
-  //   formData.append("public", isPublic);
-  //   try {
-  //     const result = await axios.post("/images", formData, {
-  //       headers: { "Content-Type": "multipart/form-data" },
-  //       onUploadProgress: (e) => {
-  //         setUploadProgress(Math.round((e.loaded / e.total) * 100));
-  //       },
-  //     });
-  //     if (isPublic)
-  //       setPublicImages((prevData) => [...result.data, ...prevData]);
-  //     setPrivateImages((prevData) => [...result.data, ...prevData]);
-  //     toast.success("Files uploaded :)");
-  //     setTimeout(() => {
-  //       setUploadProgress([]);
-  //       setFiles(null);
-  //       setPreviews([]);
-  //       inputRef.current = null;
-  //     }, 5000);
-  //   } catch (error) {
-  //     setUploadProgress([]);
-  //     setFiles(null);
-  //     setPreviews([]);
-  //     toast.error(error.response.data.message);
-  //   }
-  // };
-
   const previewImages = previews.map((preview, index) => (
     <div key={index}>
       <img
@@ -167,7 +137,7 @@ const UploadForm = () => {
           id="images"
           type="file"
           multiple
-          accept="image/*"
+          accept="image/*" // 업로드 가능한 파일 타입
           onChange={imageSelectHandler}
         />
       </div>

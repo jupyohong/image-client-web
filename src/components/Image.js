@@ -1,20 +1,22 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 
-const Image = ({ imageUrl }) => {
+const Image = ({ imageKey }) => {
   const [isError, setIsError] = useState(false);
-  const [hashedUrl, setHashedUrl] = useState(imageUrl);
+  const [signedUrl, setSignedUrl] = useState(imageKey);
 
   useEffect(() => {
     let intervalId;
     if (isError && !intervalId) {
-      intervalId = setInterval(
-        () => setHashedUrl(`${imageUrl}#${Date.now}`),
-        1000
-      );
+      intervalId = setInterval(() => {
+        axios.get(`/images/presigned/${imageKey}`).then((result) => {
+          setSignedUrl(result.data.url);
+        });
+      }, 1000);
     } else if (!isError && intervalId) clearInterval(intervalId);
-    else setHashedUrl(imageUrl);
+    else setSignedUrl(imageKey);
     return () => clearInterval(intervalId);
-  }, [isError, setHashedUrl, imageUrl]);
+  }, [isError, setSignedUrl, imageKey]);
 
   return (
     <img
@@ -24,7 +26,7 @@ const Image = ({ imageUrl }) => {
         setIsError(false);
       }}
       style={{ display: isError ? "none" : "block" }}
-      src={hashedUrl}
+      src={signedUrl}
     />
   );
 };

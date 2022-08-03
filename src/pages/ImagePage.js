@@ -17,15 +17,15 @@ const ImagePage = () => {
 
   // images 배열이 바뀔 때마다 실행
   useEffect(() => {
-    const img = images.find((image) => image._id === imageId);
+    const img = images.find((image) => image.key === imageId);
     if (img) setImage(img);
   }, [images, imageId]);
 
   // 첫 로딩(새로고침) 또는 다른 이미지로 바뀔 때만 실행
   useEffect(() => {
-    if (image && image._id === imageId) return;
+    if (image && image.key === imageId) return;
     axios
-      .get(`images/${imageId}`)
+      .get(`images/presigned/${imageId}`)
       .then((data) => setImage(data))
       .catch((err) => toast.error(err.response.data.message));
   }, [image, imageId]);
@@ -37,8 +37,8 @@ const ImagePage = () => {
   if (!image) return <h3>Loading image...</h3>;
 
   const updateImages = (images, image) =>
-    [...images.filter((image) => image._id !== imageId), image].sort((a, b) => {
-      if (a._id < b._id) return 1;
+    [...images.filter((image) => image.key !== imageId), image].sort((a, b) => {
+      if (a.key < b.key) return 1;
       else return -1;
     });
 
@@ -64,10 +64,10 @@ const ImagePage = () => {
       const result = await axios.delete(`/images/${imageId}`);
       toast.success(result.data.message);
       setPublicImages((prevData) =>
-        prevData.filter((image) => image._id !== imageId)
+        prevData.filter((image) => image.key !== imageId)
       );
       setPrivateImages((prevData) =>
-        prevData.filter((image) => image._id !== imageId)
+        prevData.filter((image) => image.key !== imageId)
       );
     } catch (err) {
       console.error(err);
@@ -78,11 +78,7 @@ const ImagePage = () => {
   return (
     <div>
       <h3>Image Page</h3>
-      <img
-        style={{ width: "100%" }}
-        alt={imageId}
-        src={`https://image-upload-test-coconutsilo.s3.ap-northeast-2.amazonaws.com/raw/${image.key}`}
-      />
+      <img style={{ width: "100%" }} alt={imageId} src={image.url} />
       <span>Likes {image.likes.length}</span>
       {me && me.userId === image.user._id && (
         <button
